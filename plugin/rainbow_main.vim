@@ -49,7 +49,7 @@ fun s:eq(x, y)
 	return type(a:x) == type(a:y) && a:x == a:y
 endfun
 
-fun rainbow_main#config()
+fun s:config()
 	let g = exists('g:rainbow_conf')? g:rainbow_conf : {}
 	"echom 'g:rainbow_conf:' string(g)
 	let s = get(g, 'separately', {})
@@ -69,7 +69,7 @@ fun rainbow_main#config()
 	return s:eq(conf, 0) ? 0 : extend(dft_conf, conf)
 endfun
 
-fun rainbow_main#load()
+fun s:load()
 	if !exists('b:rainbow_conf') | let b:rainbow_conf = rainbow_main#config() | endif
 	if type(b:rainbow_conf) != type({}) | return | endif
 	call rainbow#syn(b:rainbow_conf)
@@ -77,25 +77,25 @@ fun rainbow_main#load()
 	let b:rainbow_loaded = 1
 endfun
 
-fun rainbow_main#clear()
+fun s:clear()
 	call rainbow#hi_clear(b:rainbow_conf)
 	call rainbow#syn_clear(b:rainbow_conf)
 	let b:rainbow_loaded = 0
 endfun
 
-fun rainbow_main#toggle()
+fun s:toggle()
 	if exists('b:rainbow_loaded') && b:rainbow_loaded == 1
-		call rainbow_main#clear()
+		call s:clear()
 	else
-		call rainbow_main#load()
+		call s:load()
 	endif
 endfun
 
-command! RainbowToggle call rainbow_main#toggle()
-command! RainbowToggleOn call rainbow_main#load()
-command! RainbowToggleOff call rainbow_main#clear()
+command! RainbowToggle call <SID>toggle()
+command! RainbowToggleOn call <SID>load()
+command! RainbowToggleOff call <SID>clear()
 
 if (exists('g:rainbow_active') && g:rainbow_active)
-	auto syntax * call rainbow_main#load()
-	auto colorscheme * call rainbow_main#load()
+	auto syntax * call <SID>load()
+	auto colorscheme * call <SID>load()
 endif
